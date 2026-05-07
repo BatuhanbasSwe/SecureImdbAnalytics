@@ -3,11 +3,17 @@
 Idempotent — records that already have a `poster_url` are skipped, so re-runs
 only fetch missing ones. Run this any time you add new titles to the dataset.
 """
-import json, os, sys, time, re
+import json, os, time, re
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
-API_KEY = os.environ.get("OMDB_API_KEY", "cffe6bc2")
+API_KEY = os.environ.get("OMDB_API_KEY")
+if not API_KEY:
+    raise RuntimeError(
+        "OMDB_API_KEY environment variable not set.\n"
+        "Get a free key from https://www.omdbapi.com/apikey.aspx and add it to backend/.env:\n"
+        "  OMDB_API_KEY=your_key_here"
+    )
 JSON_PATH = os.path.join(os.path.dirname(__file__), "..", "frontend", "public", "movies_final.json")
 
 def imdb_id_from_url(url):
